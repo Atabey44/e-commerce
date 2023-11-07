@@ -49,20 +49,23 @@ public class UserService {
 
     public UserDto updateUser(Long id, UpdateUserRequest updateUserRequest) {
         Optional<User> user = userRepository.findById(id);
-        User userFound;
-        if (user.isEmpty()) {
-            userFound = new User();
+        if (user.isPresent()) {
+            User userFound = user.get();
             userFound.setFirstName(updateUserRequest.getFirstName());
             userFound.setLastName(updateUserRequest.getLastName());
             userFound.setMiddleName(updateUserRequest.getMiddleName());
             userFound.setMail(updateUserRequest.getMail());
             userFound.setPostCode(updateUserRequest.getPostCode());
 
-            userRepository.save(userFound);
+            return userDtoConverter.convert(userRepository.save(userFound));
         } else {
             return null;
         }
-        return userDtoConverter.convert(userFound);
+
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
 
     }
 }
